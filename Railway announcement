@@ -1,0 +1,107 @@
+from email.mime import audio
+import os
+import pandas as pd
+from pydub import AudioSegment
+from gtts import gTTS
+import openpyxl
+
+def textospeech(text, filename):
+    mytext = str(text)
+    language = "hi"
+    myobj = gTTS(text=mytext, lang=language, slow=True)
+    myobj.save(filename)
+
+
+# This function returns pydubs audio segement
+def mergeaudios(audios):
+    combine = AudioSegment.empty()
+    for audio in audios:
+        combine += AudioSegment.from_mp3(audio)
+    return combine    
+
+
+def generateskeleton():
+    # 1 Generate kripya dheyan dijiye
+    audio = AudioSegment.from_mp3(r"C:\Users\yash mohite\Downloads\railway_announcement_project\railway.mp3")
+    start = 88000
+    finish = 90200
+    audioprocessed = audio[start:finish]
+    audioprocessed.export("1hindi.mp3", format="mp3")
+
+    # 2 is from city
+
+    # 3 Generate se chalker
+    audio = AudioSegment.from_mp3(r"C:\Users\yash mohite\Downloads\railway_announcement_project\railway.mp3")
+    start = 91000
+    finish = 92200
+    audioprocessed = audio[start:finish]
+    audioprocessed.export("3hindi.mp3", format="mp3")
+
+    # 4 is via-city
+
+    # 5 Generate ke raaste
+    audio = AudioSegment.from_mp3(r"C:\Users\yash mohite\Downloads\railway_announcement_project\railway.mp3")
+    start = 94000
+    finish = 95000
+    audioprocessed = audio[start:finish]
+    audioprocessed.export("5hindi.mp3", format="mp3")
+
+    # 6 is to city
+
+    # 7 Generate ko jaane wali gaadi sakhya
+    audio = AudioSegment.from_mp3(r"C:\Users\yash mohite\Downloads\railway_announcement_project\railway.mp3")
+    start = 96000
+    finish = 98900
+    audioprocessed = audio[start:finish]
+    audioprocessed.export("7hindi.mp3", format="mp3")
+
+    # 8 is train no and name
+
+    # 9 generate kuch hi samay mai platform snakya
+    audio = AudioSegment.from_mp3(r"C:\Users\yash mohite\Downloads\railway_announcement_project\railway.mp3")
+    start = 10500
+    finish = 108200
+    audioprocessed = audio[start:finish]
+    audioprocessed.export("9hindi.mp3", format="mp3")
+
+    # 10 is platform number
+
+    # 11 Generate per aa rahi hai
+    audio = AudioSegment.from_mp3(r"C:\Users\yash mohite\Downloads\railway_announcement_project\railway.mp3")
+    start = 109000
+    finish = 112250
+    audioprocessed = audio[start:finish]
+    audioprocessed.export("11hindi.mp3", format="mp3")
+
+
+def genannouncement(filename):
+    df = pd.read_excel(r"C:\Users\yash mohite\Downloads\railway_announcement_project\announce_hindi.xlsx")
+    print(df)
+    for index, item in df.iterrows():
+        # 2 generate from city
+        textospeech(item['from'], '2hindi.mp3')
+
+        # 4 generate via city
+        textospeech(item['via'], '4hindi.mp3')
+
+        # 6 generate to city
+        textospeech(item['to'], '6hindi.mp3')
+
+        # 8 generate train no and name
+        textospeech(item['train_no'] + " " + item['train_name'], '8hindi.mp3')
+
+        # 10 generate platform number
+        textospeech(item['platform'], '10hindi.mp3')
+
+        audios = [f"{i}hindi.mp3" for i in range(1,12)]
+        announcement = mergeaudios(audios)
+        announcement.export(f"announcement {item['train_no']}_{index+1}.mp3", format="mp3")
+
+
+if __name__ == '__main__':
+    print("Genetating skeleton...")
+    generateskeleton()
+    print("Now Generating Announcement....")
+    genannouncement("")
+
+
